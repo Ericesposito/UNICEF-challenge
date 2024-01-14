@@ -54,7 +54,7 @@ router.get('/organizations', (req: Request, res: Response) => {
     name: 'meow',
     address: 'mims house',
   };
-  res.json(JSON.stringify(organizations));
+  res.json(organizations);
 });
 
 /**

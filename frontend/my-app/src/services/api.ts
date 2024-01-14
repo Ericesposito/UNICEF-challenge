@@ -20,7 +20,6 @@ export const makeDonation = async (
   amount: string
 ): Promise<any> => {
   try {
-    // Replace with the actual API endpoint and request method
     const response = await fetch(`http://localhost:5000/api/donate`, {
       method: 'POST',
       headers: {

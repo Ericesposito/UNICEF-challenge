@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import styles from '../styles/DonationPage.module.css'; // Adjust the path as needed
+import styles from '../styles/DonationPage.module.css';
 
-// Assume makeDonation is defined in your services
+// importing makeDonation async API call
 import { makeDonation } from '../services/api';
 
 const DonationPage: React.FC = () => {
@@ -16,7 +16,6 @@ const DonationPage: React.FC = () => {
         throw new Error("Organization ID and amount are required for donation.");
       }
       await makeDonation(organizationId, amount.toString());
-      // Handle successful submission logic (e.g., showing a success message)
   };
 
   return (
