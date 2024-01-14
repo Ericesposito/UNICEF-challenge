@@ -17,3 +17,8 @@
   padding: 10px;
   border: 1px solid #ddd;
 }
+
+.organizationLink {
+  text-decoration: none;
+  color: inherit;
+}

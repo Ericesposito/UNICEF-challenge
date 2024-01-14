@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 // importing async function getOrganizations from the backend API call/services file
 import { getOrganizations } from '../services/api';
@@ -43,9 +44,11 @@ const HomePage: React.FC = () => {
       <div className={styles.organizationsContainer}>
       {/* cleanly display the organizations by mapping the current fetched Orgs state from the backend */}
         {organizations.map(org => (
-          <div key={org.id} className={styles.organizationItem}>
-            {org.name}
-          </div>
+          <Link to={`/donate/${org.id}`} key={org.id} className={styles.organizationLink}>
+            <div className={styles.organizationItem}>
+              {org.name}
+            </div>
+        </Link>
         ))}
       </div>
     </div>

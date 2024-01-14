@@ -1,35 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+// importing backend calls to fetch data
+import { getOrganizationById, makeDonation } from '../services/api';
+import { Organization } from '../types/types';
 import styles from '../styles/DonationPage.module.css';
-
-// importing makeDonation async API call
-import { makeDonation } from '../services/api';
 
 const DonationPage: React.FC = () => {
   const [amount, setAmount] = useState<string>('');
+  const [donorName, setDonorName] = useState<string>('');
+  const [nameError, setNameError] = useState('');
+  const [donorEmail, setDonorEmail] = useState<string>('');
+  const [emailError, setEmailError] = useState(''); 
+  const [organization, setOrganization] = useState<Organization | null>(null);
   const { organizationId } = useParams<{ organizationId: string }>();
+
+  useEffect(() => {
+    if (organizationId) {
+      getOrganizationById(organizationId)
+        .then(data => setOrganization(data))
+        .catch(error => console.error(error));
+    }
+  }, [organizationId]);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateName = (name: string): boolean => {
+    return name.trim().length > 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-      if (!organizationId || !amount) {
-        throw new Error("Organization ID and amount are required for donation.");
-      }
-      await makeDonation(organizationId, amount.toString());
+
+    // Reset name and email for validation
+    setNameError('');
+    setEmailError('');
+
+    if (!organizationId) {
+      throw new Error("Organization ID is required for donation.");
+    } else if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      alert("Please enter a valid donation amount.");
+      return;
+    }
+
+    // Validating name entry
+    setNameError('');
+    if (!validateName(donorName)) {
+      setNameError('Please enter your name.');
+      return;
+    }
+    
+    // Validate email entry
+    setEmailError('');
+    if (!validateEmail(donorEmail)) {
+      setEmailError('Please enter a valid email.');
+      return;
+    }
+
+    try {
+      await makeDonation(
+        organizationId,
+        amount,
+        donorName,
+        donorEmail
+      );
+      // Alert to handle successful submission logic
+      alert("Donation successful!");
+    } catch (error) {
+      // Alert to handle error logic
+      alert("Error processing donation.");
+      console.error(error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.donationForm}>
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className={styles.donationInput}
-      />
-      <button type="submit" className={styles.donationButton}>
-        Donate
-      </button>
-    </form>
+    <div>
+      {organization && (
+        <h2 className={styles.organizationName}>Donate to {organization.name}</h2>
+      )}
+      <form onSubmit={handleSubmit} className={styles.donationForm}>
+        <input
+          type="text"
+          value={donorName}
+          onChange={(e) => setDonorName(e.target.value)}
+          placeholder="Your Name"
+          className={styles.inputField}
+        />
+        {nameError && <div className={styles.error}>{nameError}</div>}
+
+        <input
+          type="email"
+          value={donorEmail}
+          onChange={(e) => setDonorEmail(e.target.value)}
+          placeholder="Your Email"
+          className={styles.inputField}
+        />
+        {emailError && <div className={styles.error}>{emailError}</div>}
+
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Donation Amount"
+          className={styles.inputField}
+        />
+        <button type="submit" className={styles.submitButton}>
+          Donate
+        </button>
+      </form>
+    </div>
   );
 };
 

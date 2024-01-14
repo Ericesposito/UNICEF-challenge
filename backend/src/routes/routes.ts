@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 
+import { organizations } from '../mock/data';
+
 const router = Router();
 
 /**
@@ -50,11 +52,48 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/organizations', (req: Request, res: Response) => {
   // Fetch organizations from the database
   console.log('it worked for organizations get route');
-  const organizations = {
-    name: 'meow',
-    address: 'mims house',
-  };
   res.json(organizations);
+});
+
+/**
+ * @swagger
+ * /api/organizations/{id}:
+ *   get:
+ *     summary: Fetch details of a specific organization
+ *     description: Retrieves details of an organization by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the organization to fetch.
+ *     responses:
+ *       200:
+ *         description: Details of the organization.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Global Relief Foundation
+ *       404:
+ *         description: Organization not found.
+ */
+router.get('/organizations/:id', (req: Request, res: Response) => {
+  const orgId = parseInt(req.params.id).toString();
+  const organization = organizations.find((org) => org.id === orgId);
+
+  if (organization) {
+    res.json(organization);
+  } else {
+    res.status(404).send('Organization not found');
+  }
 });
 
 /**
