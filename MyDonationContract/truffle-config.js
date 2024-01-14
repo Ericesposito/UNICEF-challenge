@@ -44,7 +44,9 @@
 // require('dotenv').config();
 // const { MNEMONIC, PROJECT_ID } = process.env;
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const fs = require('fs');
+const mnemonic = fs.readFileSync('.secret').toString().trim();
 
 module.exports = {
   /**
@@ -96,6 +98,18 @@ module.exports = {
     //   network_id: 2111,   // This network is yours, in the cloud.
     //   production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    sepolia: {
+      provider: () =>
+        new HDWalletProvider(
+          mnemonic,
+          'https://sepolia.infura.io/v3/648c42b77ca14423a0accd250d22c8f0'
+        ),
+      network_id: 11155111, // Sepolia's network ID
+      gas: 5500000, // Gas limit
+      confirmations: 2, // Number of confirmations to wait between deployments
+      timeoutBlocks: 200, // Number of blocks before a deployment times out
+      skipDryRun: true, // Skip dry run before migrations
+    },
   },
 
   // Set default mocha options here, use special reporters, etc.
@@ -106,7 +120,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.21",      // Fetch exact version from solc-bin (default: truffle's version)
+      version: '0.8.21', // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
@@ -115,7 +129,7 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
-    }
+    },
   },
 
   // Truffle DB is currently disabled by default; to enable it, change enabled:
