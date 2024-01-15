@@ -6,26 +6,6 @@ const router = Router();
 
 /**
  * @swagger
- * /api:
- *   get:
- *     summary: Test endpoint
- *     description: Returns a simple 'Hello World!' message.
- *     responses:
- *       200:
- *         description: A success message.
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Hello World!
- */
-router.get('/', (req: Request, res: Response) => {
-  console.log('it worked for basic get route');
-  res.send('Hello World!');
-});
-
-/**
- * @swagger
  * /api/organizations:
  *   get:
  *     summary: Fetch a list of organizations
@@ -50,8 +30,7 @@ router.get('/', (req: Request, res: Response) => {
  *                     example: Organization Name
  */
 router.get('/organizations', (req: Request, res: Response) => {
-  // Fetch organizations from the database
-  console.log('it worked for organizations get route');
+  // API call to fetch organizations from the database
   res.json(organizations);
 });
 
@@ -89,6 +68,7 @@ router.get('/organizations/:id', (req: Request, res: Response) => {
   const orgId = parseInt(req.params.id).toString();
   const organization = organizations.find((org) => org.id === orgId);
 
+  // confirming data inside of organization array
   if (organization) {
     res.json(organization);
   } else {
@@ -135,8 +115,15 @@ router.get('/organizations/:id', (req: Request, res: Response) => {
  */
 router.post('/donate', (req: Request, res: Response) => {
   const { organizationId, amount } = req.body;
-  // Process the donation logic
-  console.log('it worked for donations post route');
+
+  if (!organizationId || !amount) {
+    return res.status(400).send('Missing organizationId or amount');
+  }
+
+  if (isNaN(amount) || amount <= 0) {
+    return res.status(400).send('Invalid amount');
+  }
+
   res.json({ success: true });
 });
 
