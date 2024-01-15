@@ -66,29 +66,27 @@ const DonationPage: React.FC = () => {
 
     try {
       // confirm that MetaMask is installed
-      // if (!isMetaMaskInstalled()) {
-      //   alert('Please install MetaMask to proceed.');
-      //   return;
-      // }
+      if (!isMetaMaskInstalled()) {
+        alert('Please install MetaMask to proceed.');
+        return;
+      }
 
       // confirm that the Ethereum account in MetaMask is accessible
-      // const accounts = await window.ethereum.request({
-      //   method: 'eth_requestAccounts',
-      // });
-      // console.log('Accounts:', accounts);
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+      if (accounts.length === 0) {
+        alert(
+          'No Ethereum accounts available. Please connect an account in MetaMask.'
+        );
+        return;
+      }
 
-      // if (accounts.length === 0) {
-      //   alert(
-      //     'No Ethereum accounts available. Please connect an account in MetaMask.'
-      //   );
-      //   return;
-      // }
-
-      // attempt to make the blockchain donation and confirm
+      // attempt to make the blockchain donation and await confirmation
       await makeBlockchainDonation(amount);
 
-      await makeDonation(organizationId, amount, donorName, donorEmail);
       // Alert to handle successful submission logic
+      await makeDonation(organizationId, amount, donorName, donorEmail);
       alert('Donation successful!');
     } catch (error) {
       // Alert to handle error logic

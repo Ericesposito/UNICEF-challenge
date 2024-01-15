@@ -7,7 +7,7 @@ import { getOrganizations } from '../services/api';
 // importing Organization type from the types file
 import { Organization } from '../types/types';
 
-import styles from '../styles/HomePage.module.css'
+import styles from '../styles/HomePage.module.css';
 
 const HomePage: React.FC = () => {
   // setting up a useState hook to hold the list of Organizations fetched from the backend
@@ -41,14 +41,20 @@ const HomePage: React.FC = () => {
   return (
     <div className={styles.homeContainer}>
       <h1 className={styles.homeTitle}>Organizations</h1>
+      <p className={styles.homeDescription}>
+        Please click one of the links below to make a donation to any of our
+        charities
+      </p>
       <div className={styles.organizationsContainer}>
-      {/* cleanly display the organizations by mapping the current fetched Orgs state from the backend */}
-        {organizations.map(org => (
-          <Link to={`/donate/${org.id}`} key={org.id} className={styles.organizationLink}>
-            <div className={styles.organizationItem}>
-              {org.name}
-            </div>
-        </Link>
+        {/* cleanly display the organizations by mapping the current fetched Orgs state from the backend */}
+        {organizations.map((org) => (
+          <Link
+            to={`/donate/${org.id}`}
+            key={org.id}
+            className={styles.organizationLink}
+          >
+            <div className={styles.organizationItem}>{org.name}</div>
+          </Link>
         ))}
       </div>
     </div>

@@ -24,7 +24,7 @@ const makeBlockchainDonation = async (amountInEther: string): Promise<void> => {
 
     // confirming that window.ethereum is being accessed properly for account validation
     if (!window.ethereum || !window.ethereum.request) {
-      throw new Error('Ethereum object not found. Please install MetaMask.');
+      throw new Error('Ethereum object not found.');
     }
 
     // Request account access

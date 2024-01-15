@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.3.3",
-    "@types/web3": "^1.2.2"
+    "@types/web3": "^1.2.2",
+    "jest": "^27.5.1"
   }
 }

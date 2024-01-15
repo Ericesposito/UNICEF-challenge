@@ -1,0 +1,14 @@
+{
+  "name": "unicef-challenge-full-stack-app",
+  "version": "1.0.0",
+  "description": "Spins up frontend and backend servers",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
