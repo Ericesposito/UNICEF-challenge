@@ -3,6 +3,10 @@ import { useParams } from 'react-router-dom';
 
 // importing backend calls to fetch data
 import { getOrganizationById, makeDonation } from '../services/api';
+import {
+  makeBlockchainDonation,
+  isMetaMaskInstalled,
+} from '../services/web3Service';
 import { Organization } from '../types/types';
 import styles from '../styles/DonationPage.module.css';
 
@@ -11,15 +15,15 @@ const DonationPage: React.FC = () => {
   const [donorName, setDonorName] = useState<string>('');
   const [nameError, setNameError] = useState('');
   const [donorEmail, setDonorEmail] = useState<string>('');
-  const [emailError, setEmailError] = useState(''); 
+  const [emailError, setEmailError] = useState('');
   const [organization, setOrganization] = useState<Organization | null>(null);
   const { organizationId } = useParams<{ organizationId: string }>();
 
   useEffect(() => {
     if (organizationId) {
       getOrganizationById(organizationId)
-        .then(data => setOrganization(data))
-        .catch(error => console.error(error));
+        .then((data) => setOrganization(data))
+        .catch((error) => console.error(error));
     }
   }, [organizationId]);
 
@@ -40,9 +44,9 @@ const DonationPage: React.FC = () => {
     setEmailError('');
 
     if (!organizationId) {
-      throw new Error("Organization ID is required for donation.");
+      throw new Error('Organization ID is required for donation.');
     } else if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      alert("Please enter a valid donation amount.");
+      alert('Please enter a valid donation amount.');
       return;
     }
 
@@ -52,7 +56,7 @@ const DonationPage: React.FC = () => {
       setNameError('Please enter your name.');
       return;
     }
-    
+
     // Validate email entry
     setEmailError('');
     if (!validateEmail(donorEmail)) {
@@ -61,17 +65,34 @@ const DonationPage: React.FC = () => {
     }
 
     try {
-      await makeDonation(
-        organizationId,
-        amount,
-        donorName,
-        donorEmail
-      );
+      // confirm that MetaMask is installed
+      // if (!isMetaMaskInstalled()) {
+      //   alert('Please install MetaMask to proceed.');
+      //   return;
+      // }
+
+      // confirm that the Ethereum account in MetaMask is accessible
+      // const accounts = await window.ethereum.request({
+      //   method: 'eth_requestAccounts',
+      // });
+      // console.log('Accounts:', accounts);
+
+      // if (accounts.length === 0) {
+      //   alert(
+      //     'No Ethereum accounts available. Please connect an account in MetaMask.'
+      //   );
+      //   return;
+      // }
+
+      // attempt to make the blockchain donation and confirm
+      await makeBlockchainDonation(amount);
+
+      await makeDonation(organizationId, amount, donorName, donorEmail);
       // Alert to handle successful submission logic
-      alert("Donation successful!");
+      alert('Donation successful!');
     } catch (error) {
       // Alert to handle error logic
-      alert("Error processing donation.");
+      alert('Error processing donation.');
       console.error(error);
     }
   };
@@ -79,7 +100,9 @@ const DonationPage: React.FC = () => {
   return (
     <div>
       {organization && (
-        <h2 className={styles.organizationName}>Donate to {organization.name}</h2>
+        <h2 className={styles.organizationName}>
+          Donate to {organization.name}
+        </h2>
       )}
       <form onSubmit={handleSubmit} className={styles.donationForm}>
         <input
@@ -104,7 +127,7 @@ const DonationPage: React.FC = () => {
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="Donation Amount"
+          placeholder="Donation Amount in ETH"
           className={styles.inputField}
         />
         <button type="submit" className={styles.submitButton}>
